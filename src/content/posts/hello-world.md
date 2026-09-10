@@ -1,6 +1,6 @@
 ---
-title: '文章标题'
-description: '一句话摘要'
+title: '第一篇博客'
+description: '记录第一次创建博客遇到的问题以及如何解决'
 pubDate: 2026-09-10
 category: essay          # ← 这里决定分类
 tags: ['python']

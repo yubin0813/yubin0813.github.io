@@ -1,0 +1,27 @@
+---
+import { getCollection } from 'astro:content'
+import BaseLayout from '../layouts/BaseLayout.astro'
+import PostCard from '../components/PostCard.astro'
+import { siteConfig } from '../site.config'
+
+const posts = (await getCollection('posts'))
+  .filter((p) => !p.data.draft)
+  .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
+---
+
+<BaseLayout>
+  <section class="mx-auto max-w-2xl">
+    <div class="mb-10">
+      <h1 class="text-2xl font-bold text-text">{siteConfig.title}</h1>
+      <p class="mt-2 text-muted">{siteConfig.description}</p>
+    </div>
+    <div>
+      {posts.map((post) => <PostCard post={post} />)}
+    </div>
+    {
+      posts.length === 0 && (
+        <p class="py-12 text-center text-muted">还没有文章，开始在 src/content/posts 写第一篇吧。</p>
+      )
+    }
+  </section>
+</BaseLayout>

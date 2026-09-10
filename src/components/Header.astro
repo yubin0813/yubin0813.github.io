@@ -1,0 +1,13 @@
+---
+import ThemeToggle from './ThemeToggle.astro'
+import { siteConfig } from '../site.config'
+---
+
+<header class="flex items-center justify-between py-6">
+  <a href="/" class="text-lg font-bold text-text">{siteConfig.title}</a>
+  <nav class="flex items-center gap-1">
+    <a href="/" class="rounded-md px-3 py-2 text-sm text-muted transition-colors hover:text-text">首页</a>
+    <a href="/rss.xml" class="rounded-md px-3 py-2 text-sm text-muted transition-colors hover:text-text">RSS</a>
+    <ThemeToggle />
+  </nav>
+</header>

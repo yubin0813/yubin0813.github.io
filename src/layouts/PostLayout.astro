@@ -1,0 +1,42 @@
+---
+import type { CollectionEntry } from 'astro:content'
+import BaseLayout from './BaseLayout.astro'
+import { render } from 'astro:content'
+
+interface Props {
+  post: CollectionEntry<'posts'>
+}
+
+const { post } = Astro.props
+const { title, description, pubDate, tags } = post.data
+const { Content } = await render(post)
+const dateStr = pubDate.toLocaleDateString('zh-CN', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+})
+---
+
+<BaseLayout title={title} description={description}>
+  <article class="prose mx-auto">
+    <header class="mb-8 border-b border-border pb-6">
+      <h1 class="mb-3 border-0 p-0 text-3xl font-bold">{title}</h1>
+      <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted">
+        <time datetime={pubDate.toISOString()}>{dateStr}</time>
+        {
+          tags.length > 0 && (
+            <span class="flex flex-wrap gap-2">
+              {tags.map((t) => (
+                <span class="rounded bg-code-bg px-2 py-0.5">#{t}</span>
+              ))}
+            </span>
+          )
+        }
+      </div>
+    </header>
+    <Content />
+    <footer class="mt-12 border-t border-border pt-6">
+      <a href="/" class="text-accent">← 返回首页</a>
+    </footer>
+  </article>
+</BaseLayout>

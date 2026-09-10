@@ -1,0 +1,19 @@
+---
+import { siteConfig } from '../site.config'
+
+const year = new Date().getFullYear()
+const socials = siteConfig.socials.filter((s) => s.platform === 'github' || s.platform === 'rss')
+---
+
+<footer class="flex items-center justify-between border-t border-border py-6 text-sm text-muted">
+  <span>© {year} {siteConfig.author}</span>
+  <div class="flex gap-4">
+    {
+      socials.map((s) => (
+        <a href={s.url} class="transition-colors hover:text-text">
+          {s.platform === 'github' ? 'GitHub' : 'RSS'}
+        </a>
+      ))
+    }
+  </div>
+</footer>

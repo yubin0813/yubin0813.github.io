@@ -32,12 +32,8 @@ jobs:
         run: npm ci
 
       - name: Build with Astro
+        # withastro/action 内部已处理构建和 artifact 上传，deploy-pages 可直接消费
         uses: withastro/action@v5
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./dist
 
   deploy:
     needs: build

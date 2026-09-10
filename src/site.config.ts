@@ -8,8 +8,8 @@ export const siteConfig = {
   url: 'https://yubin0813.github.io',
 
   // 站点信息
-  title: 'Yubin 的技术笔记',
-  description: '记录编程与学习过程中的思考，专注技术本身。',
+  title: 'Yubin 的博客',
+  description: '记录编程与学习过程中的思考。',
 
   // 作者
   author: 'yubin',

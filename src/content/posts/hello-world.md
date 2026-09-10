@@ -2,6 +2,7 @@
 title: 'Hello World：博客上线'
 description: '从零搭建一个简约风格的技术博客，记录第一篇内容。'
 pubDate: 2026-09-10
+category: tech
 tags: ['随笔', 'astro']
 ---
 

@@ -1,0 +1,39 @@
+---
+import { getCollection } from 'astro:content'
+import BaseLayout from '../layouts/BaseLayout.astro'
+import PostCard from '../components/PostCard.astro'
+
+export async function getStaticPaths() {
+  const posts = (await getCollection('posts')).filter((p) => !p.data.draft)
+  // 收集所有 category 值
+  const categorySet = new Set(posts.map((p) => p.data.category))
+  return Array.from(categorySet).map((cat) => ({
+    params: { category: cat },
+  }))
+}
+
+const category = Astro.params.category as 'tech' | 'essay'
+const categoryLabel = category === 'tech' ? '技术博客' : '日常随笔'
+const posts = (await getCollection('posts'))
+  .filter((p) => !p.data.draft && p.data.category === category)
+  .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
+---
+
+<BaseLayout title={categoryLabel}>
+  <section class="mx-auto max-w-2xl">
+    <div class="mb-10">
+      <h1 class="text-2xl font-bold text-text">{categoryLabel}</h1>
+      <p class="mt-2 text-muted">
+        {category === 'tech' ? '编程、技术学习与实践的记录。' : '生活、思考与日常。'}
+      </p>
+    </div>
+    <div>
+      {posts.map((post) => <PostCard post={post} />)}
+    </div>
+    {
+      posts.length === 0 && (
+        <p class="py-12 text-center text-muted">暂无内容。</p>
+      )
+    }
+  </section>
+</BaseLayout>

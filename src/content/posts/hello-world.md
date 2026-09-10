@@ -1,10 +1,12 @@
 ---
-title: 'Hello World：博客上线'
-description: '从零搭建一个简约风格的技术博客，记录第一篇内容。'
+title: '文章标题'
+description: '一句话摘要'
 pubDate: 2026-09-10
-tags: ['随笔', 'astro']
+category: essay          # ← 这里决定分类
+tags: ['python']
 ---
 
+正文从这里开始……
 # 这是博客的第一篇文章。
 本博客用 Astro 搭建框架，github部署，风格简约，支持明暗主题切换。
 搭建过程遇到许多问题，如在GitHub部署时发现git命令不太熟悉，也相当于重新温习了一遍如何关联仓库，克隆仓库，拉取代码，推送代码。

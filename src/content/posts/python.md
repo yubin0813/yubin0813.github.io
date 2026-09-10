@@ -2,6 +2,7 @@
 title: 'python学习笔记'
 description: '记录python学习过程的笔记'
 pubDate: 2026-09-10
+category: tech 
 tags: ['python']
 ---
 # Python 复习笔记

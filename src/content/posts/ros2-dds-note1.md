@@ -2,7 +2,7 @@
 title: '第二篇博客'
 description: '为什么发布者和订阅者不需要知道对方存在？'
 pubDate: 2026-09-22
-category: essay         
+category: tech       
 tags: ['ros']
 ---
 

@@ -1,6 +1,6 @@
 ---
-title: '第二篇博客'
-description: '为什么发布者和订阅者不需要知道对方存在？'
+title: '为什么发布者和订阅者不需要知道对方存在？'
+description: '发布者和订阅者解耦关系拆解'
 pubDate: 2026-09-22
 category: tech       
 tags: ['ros']

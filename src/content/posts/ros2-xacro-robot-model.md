@@ -10,7 +10,7 @@ tags: ['ros', 'urdf', 'xacro']
 
 URDF 是 ROS 中描述机器人模型的标准格式，但直接写 URDF 有明显的不足：尺寸全部硬编码、重复结构只能复制粘贴、一个模型只能塞进一个大文件。xacro 作为 URDF 的预处理语言，通过属性、宏和文件包含解决了这三个问题，适合用来搭建结构稍复杂的机器人。
 
-下面按照"先准备、后底盘、再传感器和轮子、最后总装"的顺序，完整走一遍搭建流程。
+下面按照"先准备、再底盘、然后传感器和轮子、最后总装"的顺序走一遍流程，其中底盘一节会先安排一个虚拟 link 把整车锚定到地面。
 
 ## 一、准备
 
@@ -96,33 +96,32 @@ URDF 是 ROS 中描述机器人模型的标准格式，但直接写 URDF 有明�
 
 有两点需要注意：一是自闭合标签（如 origin）末尾要带 `/`；二是 collision 只关心几何形状，把 visual 里的 origin 和 geometry 复制过来即可，不需要材质。
 
-## 三、虚拟部件贴地
+### 贴地处理
 
-底盘建好之后，模型的根 link 并不在地面上，需要借助一个虚拟部件调整整体高度。做法是：
+URDF 里没有天然的"地面"概念，模型的整体位置由根 link 的原点决定。如果直接以底盘作为根节点，整车会"陷"在地面以下。所以底盘宏里还放了两个成员：一个空 link `base_footprint` 和一个 fixed 关节。
 
-1. 创建一个空 link `base_footprint`，作为锚点固定在地面上；
-2. 用 fixed 关节连接，parent 为 `base_footprint`，child 为底盘；
-3. origin 的 z 值设为"底盘高度的一半 + 轮子半径"，使轮子刚好贴地。
+`base_footprint` 作为模型的根，锚定在地面上（RViz 中即全局坐标系原点）；fixed 关节以它为 parent、底盘为 child，通过 origin 的 z 值把底盘抬高。这里 z 取"底盘高度的一半 + 轮子半径"，抬升之后轮子底部刚好落在 z=0 的平面上：
 
 ```xml
-<!-- 虚拟部件贴地 -->
+<!-- 虚拟部件：地面锚点 -->
 <link name="base_footprint"/>
 
-<joint name="base_footprint_joint" type="fixed">
+<!-- 把底盘抬到"轮子刚好贴地"的高度 -->
+<joint name="base_joint" type="fixed">
   <parent link="base_footprint"/>
   <child link="base_link"/>
-  <origin xyz="0 0 底盘高度/2+轮子半径" rpy="0 0 0"/>
+  <origin xyz="0 0 ${height/2 + wheel_radius}" rpy="0 0 0"/>
 </joint>
 ```
 
-这个高度值不是固定的，取决于具体机器人的底盘高度和轮子尺寸。
+这也是 `base_xacro` 宏的参数里需要传入 `wheel_radius` 的原因：贴地高度由底盘尺寸和轮子半径共同决定，具体值按自己机器人的实际尺寸调整。
 
-## 四、传感器部件
+## 三、传感器部件
 
-相机、激光雷达、IMU 等传感器，每个单独建一个文件，例如 `camera.urdf.xacro`。写法和底盘完全一致：link 中写齐 visual、collision、inertial，再用 fixed 关节固定到底盘上。
+相机、激光雷达、IMU 等传感器，可以一个传感器一个文件，也可以像这里一样统一放在 `sensors.urdf.xacro` 里，把每个传感器封装成一个宏。写法和底盘一致：link 中写齐 visual、collision、inertial，再用 fixed 关节固定到底盘上。
 
 ```xml
-<!-- camera.urdf.xacro -->
+<!-- sensors.urdf.xacro -->
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
   <xacro:include filename="$(find my_robot_description)/urdf/common_inertia.xacro"/>
@@ -180,9 +179,9 @@ URDF 是 ROS 中描述机器人模型的标准格式，但直接写 URDF 有明�
 </robot>
 ```
 
-关节 origin 描述的是传感器相对底盘的安装位置，不同传感器按实际安装位置填写。
+关节 origin 描述的是传感器相对底盘的安装位置，不同传感器按实际安装位置填写。另外 IMU 这类没有实体的器件，visual 和 collision 都可以省略，只保留 inertial 即可。
 
-## 五、轮子（用宏复用）
+## 四、轮子（用宏复用）
 
 四个轮子结构完全相同，只是名称和位置不同，正好用宏来参数化：定义一次，调用四次。
 
@@ -218,7 +217,7 @@ URDF 是 ROS 中描述机器人模型的标准格式，但直接写 URDF 有明�
 
 轮子的关节类型为 continuous，可以连续转动。另外，圆柱体几何默认轴向是 z 方向，即轮轴朝上，需要在 origin 的 rpy 中绕相应轴旋转 90°，让轮轴水平。
 
-## 六、总装文件
+## 五、总装文件
 
 所有部件完成后，新建主文件 `robot.urdf.xacro`，先 include 引入各个部件文件，再依次调用对应的宏。
 
@@ -249,7 +248,7 @@ URDF 是 ROS 中描述机器人模型的标准格式，但直接写 URDF 有明�
 </robot>
 ```
 
-至此整个模型的框架就搭好了。把各部分代码补充完整后，可以先用 xacro 命令将总装文件展开为纯 URDF 检查，再放入 RViz 中可视化验证。
+至此整个模型就搭好了。可以先用 xacro 命令把总装文件展开为纯 URDF 检查一遍，再放入 RViz 中可视化验证。
 
 ## 总结
 

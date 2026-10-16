@@ -3,7 +3,7 @@ title: '用 xacro 搭建机器人 URDF 模型：从底盘到总装'
 description: '记录使用 xacro 分模块搭建机器人底盘、传感器与轮子的完整流程'
 pubDate: 2026-10-02
 category: tech
-tags: ['ros', 'urdf', 'xacro']
+tags: ['urdf', 'xacro']
 ---
 
 # 用 xacro 搭建机器人 URDF 模型：从底盘到总装

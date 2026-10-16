@@ -3,10 +3,10 @@ title: '一切皆插件：DeepSeek Harness 为什么重做了 AI Agent 的底盘
 description: 'deepseek harness 与其他agent的区别'
 pubDate: 2026-10-11
 category: tech
-tags: ['ros', 'urdf', 'xacro']
+tags: ['deepseek harness']
 ---
 
-# 一切皆插件：DeepSeek Harness 为什么重做了 AI Agent 的底盘
+
 
 > Agent = Model + Harness。模型决定智能的上限，Harness 决定上限的兑现率。
 
